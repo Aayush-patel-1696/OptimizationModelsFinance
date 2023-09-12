@@ -82,6 +82,22 @@ size = position_matrix.shape[0]
 
 def optimize_us_dollar_wealth(position_matrix,rate_conversion_matrix,size):
 
+    """
+    Minimize : f(x) = -[sigma(sum i)]r_i2*(sigma(sum j)x_ij)
+
+    Constraints:
+
+    Inequality:
+    1. -sigma(sum over j) x_ij <= -b_i    -> A_in = b_in
+
+    Equality:
+    2. sigma(sum over i) r_ij*x_ij = b_i -> A_eq = b_eq
+
+    Bound
+    3. xij >= 0
+
+    """
+
     # Create the coefficient matrix for constraint 1
     A_in = np.zeros((size,size*size),dtype =int)
     for index,rows in enumerate(A_in):
@@ -123,32 +139,84 @@ def optimize_us_dollar_wealth(position_matrix,rate_conversion_matrix,size):
 
     return None
 
-def get_arbitrage(position_matrix,rate_conversion_matrix,size):
 
-    # Create the coefficient matrix for constraint 1
-    A_in = np.zeros((size,size*size),dtype =int)
-    for index,rows in enumerate(A_in):
-        rows[index*size:(index+1)*size] = -1
+def get_arbitrage(rate_conversion_matrix,size,currency_index,arbitary_bound):
 
-    b_in = np.array((position_matrix[:,0])*-1)     # desired position matrix
 
-    print("A_in",A_in)
+    """
 
-    # Create the coefficient matrix for constraint 2
-    A_eq = np.zeros((size,size*size),dtype =float)
-    for index,row in enumerate(A_eq):
+    Minimize = f(x) = -(sigma(sum overi,j)Xij - sigma(sum_over i,j)rij*Xij)
+
+    Constraints:
+
+    Inequality:
+    1. -sigma(sum over j) x_ij <= 0    -> A_in_1 = b_in_1
+    2. -sigma(sum over i)r_ij*x_ij <= 0 -> A_in_2 = b_in_2
+
+    Equality
+    3. (-sigma(sum overi,j) x_ij - sigma(sum overi,j)r_ij*x_ij) = 0 except currency_index (k) -> A_eq_1 -A_eq_2 = b_eq_1 -b_eq_2
+
+    Bound
+    3. xij >= 0 ,Xij <= arbitary_bound -> control the output
+
+    
+    
+    """
+
+    k =  currency_index
+
+
+    # Create the coefficient matrix for constraint 
+    A_in_1 = np.zeros((size,size*size),dtype =int)
+    for index,rows in enumerate(A_in_1):
+        val = -1
+        rows[index*size:(index+1)*size] = val
+    b_in_1 = np.array([0]*size)     # desired position matrix
+
+    A_in_2 = np.zeros((size,size*size),dtype =float)
+    for index,row in enumerate(A_in_2):
+        
+        val = -rate_conversion_matrix[:,index]
+     
         temp = np.zeros((size,size),dtype=float)
-        temp[:,index] = rate_conversion_matrix[:,index]
+        temp[:,index] = val
         row[:] = temp.flatten()
 
-    b_eq = np.array(position_matrix[:,0])     # desired position matrix
+    b_in_2 = np.array([0]*size)     # desired position matrix
 
-    print("A_eq",A_eq)
+    A_in =  A_in_1 + A_in_2 
+    b_in =  b_in_1 + b_in_2 
 
+    #Create the coefficient matrix for constraint 2
+    A_eq_1 = np.zeros((size,size*size),dtype =int)
+    for index,rows in enumerate(A_eq_1):
+        if index == k:
+            val = 0
+        else:
+            val = -1
+        rows[index*size:(index+1)*size] = val
+    b_eq_1 = np.array([0]*size)     # desired position matrix
+
+    A_eq_2 = np.zeros((size,size*size),dtype =float)
+    for index,row in enumerate(A_eq_2):
+        if index ==  k:
+            val = 0
+        else:
+            val = -rate_conversion_matrix[:,index]
+    
+        temp = np.zeros((size,size),dtype=float)
+        temp[:,index] = val
+        row[:] = temp.flatten()
+    b_eq_2 = np.array([0]*size) 
+
+    A_eq = A_eq_1 - A_eq_2
+    b_eq = b_eq_1 - b_eq_2
+
+     
     # Create Bound matrix for variables
     bnd = []
     for i in range(size*size):
-        bnd.append((0,float('inf')))
+        bnd.append((0,arbitary_bound))
     print("bnd",bnd)
 
     #  Creare Objective function matrix
@@ -160,20 +228,31 @@ def get_arbitrage(position_matrix,rate_conversion_matrix,size):
     # Solve Optimization 
     opt = optimize.linprog(c=Obj, A_ub=A_in, b_ub=b_in,A_eq=A_eq, b_eq=b_eq,bounds=bnd,method="highs")
     print(opt)
-    print("Ans",)
+    print("Ans",opt.x)
 
-    data = np.asarray(((opt.x)*rate_conversion_matrix.flatten()).reshape(10,10))
-    print(np.sum(data,axis=0))
+    data = np.asarray(((opt.x)).reshape(10,10))
+    
+    data_1 = np.asarray(((opt.x)*rate_conversion_matrix.flatten()).reshape(10,10))
+    data_1 = np.sum(data_1,axis=0)
+    print("data_1",data_1)
+
+    data_2 = np.sum(data,axis=1)
+    print("data_2",data_2)
+  
+    p = (data_1-data_2)*(rate_conversion_matrix[:,currency_index])
+    print("Increase in currency",np.sum(p))
     np.savetxt(r'week1/ans_arbitrage.csv', data, delimiter=',')
 
     return None
 
 
 
+
+
 if __name__ == "__main__":
 
     problem_1 = optimize_us_dollar_wealth(position_matrix,rate_conversion_matrix,size)
-    problem_2 = get_arbitrage(position_matrix,rate_conversion_matrix,size)
+    problem_2 = get_arbitrage(rate_conversion_matrix,size,1,1)
 
 
 
