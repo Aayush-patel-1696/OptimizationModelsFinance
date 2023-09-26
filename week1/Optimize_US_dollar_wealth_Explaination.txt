@@ -1,0 +1,23 @@
+##################US dollar wealth formulation#######################################
+
+Mathematical formulation is already provided in pdf file. so skipping that
+
+
+#######################Python solution#################################################
+
+The solution of above equation is done in python using the "get_us_dollar_wealth" function which is provided in currency_2023f.py file
+
+In which the inputs are position_matrix, conversion matrix, size
+
+Note : In python scipy function uses the minimization equatility and minimize function so to convert our maximization I sometimes multipy the equation with -1 to convert it into
+Minimization
+
+The ans to the function is saved in ans_optimize_us_dollar.csv
+
+############################Validation###################################################
+
+Validation csv is stored in ans_us_dollar_vali.xlsx. To check the constraints are satified
+
+
+##############################Ans##########################################################
+For the given set of inputs the maximized value we got 150.0308
