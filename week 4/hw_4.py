@@ -1,7 +1,7 @@
 from scipy import optimize
 
 
-def dual_problem_second():
+def dual_of_first_second_problem():
     # Primal Problem
     obj = [-4,-3]        
 
@@ -22,7 +22,7 @@ def dual_problem_second():
     print(opt.x)
 
 
-def game_matrix_primal_third():
+def game_matrix_primal_third_problem():
 
     # Primal Problem
     obj = [1,0,0]        # Objective function: 3x1 + 2x2
@@ -51,7 +51,7 @@ def game_matrix_primal_third():
 
 
 
-def game_matrix_dual_third():
+def game_matrix_dual_third_problem():
     obj = [-1,0,0,0]        
 
     # Constraint matrix
@@ -77,9 +77,9 @@ def game_matrix_dual_third():
 
 
 
-dual_problem_second()
-game_matrix_primal_third()
-game_matrix_dual_third()
+dual_of_first_second_problem()
+game_matrix_primal_third_problem()
+game_matrix_dual_third_problem()
 
 
 
