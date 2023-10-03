@@ -2,13 +2,6 @@
 from scipy import optimize,stats
 import numpy as np
 
-# Initialize the variables
-# position_matrix = np.random.randint(100, size=(10, 2))   # n*2
-# rate_conversion_matrix = np.random.randint(3, size=(10, 10))   # n*n
-# size = position_matrix.shape[0]
-
-
-
 def optimize_investment_1():
 
     A_in = [[0.5,1.20,1,0,0],[1.25,0.6,0.5,0,1]]
@@ -72,6 +65,68 @@ def optimize_bond_fund_2():
     print("Obj",np.sum(Obj*100))
 
 
+def optimize_bond_fund_2v():
+
+    size = 4
+    ask_bid_matrix = np.array([[980,990],[960,972],[970,985],[940,954]])
+    A_eq_1 = np.zeros((size,size*size),dtype=float)
+    for index,rows in enumerate(A_eq_1):
+        rows[index*size:(index+1)*size] = 1
+        rows[index*size +index] = 0
+
+    # A_eq_2 = np.zeros((size,size*size))
+    # for index,rows in enumerate(A_eq_2):
+    #     temp = np.zeros((size,size),dtype=float)
+    #     temp[:,index] = -1*ask_bid_matrix[:,0]/ask_bid_matrix[index,1]
+    #     temp[index,index] = 0
+    #     rows[:] = temp.flatten()
+
+
+    A_in_2 = A_eq_1 
+    b_in_2 = [100]*size
+
+    return_matrix = np.array([[100,70,80,60],[110,80,90,50],[1100,1090,1020,1110]])
+    A_in = np.zeros((3,size*size))
+    for index,rows in enumerate(A_in):
+        temp = np.zeros((size,size))
+        for indexj,rowj in enumerate(A_eq_1):
+            temp[indexj,indexj] = -1*return_matrix[index,indexj]
+            
+        rows[:] =  temp.flatten()
+    b_in = -1*(np.sum(return_matrix,axis=1))
+
+    A_in_3 = np.concatenate((A_in,A_in_2),axis=0)
+    b_in_3 = np.concatenate((b_in,b_in_2))
+
+    # Create Bound matrix for variables
+    bnd = []
+    for i in range(size*size):
+        bnd.append((0,float('inf')))
+
+    # Obj = np.zeros((size,size),dtype=float)
+    # for index,row in enumerate(Obj):
+    #     row[index] = -1*(np.sum(np.multiply(return_matrix[:,index],[1.1025,1.05,1])))
+    # Obj = Obj.flatten()
+    Obj_1 = np.ones((size,size),dtype=float)
+    for index,row in enumerate(Obj_1):
+        row[:] = row[:]*ask_bid_matrix[index,0]
+        row[index] = 0
+    print(Obj_1)
+    Obj_2 = np.ones((size,size),dtype=float)
+    for index,row in enumerate(Obj_2.T):
+        row[:] = row[:]*ask_bid_matrix[index,1]
+        row[index] = 0
+
+    print(Obj_2)
+    Obj = 1*(Obj_1-Obj_2).flatten()
+
+
+    opt = optimize.linprog(c=Obj, A_ub=A_in_3, b_ub=b_in_3,bounds=bnd,method="highs")
+    print(opt)
+    print("Ans",opt.x)
+    print("Obj",np.sum(Obj*100))
+
+
 def optimize_pension_fund_3():
 
 
@@ -96,14 +151,12 @@ def optimize_pension_fund_3():
     print("Ans",opt.x)
   
 
-    
-
-
 if __name__ == "__main__":
 
-    optimize_investment_1()
-    optimize_bond_fund_2()
-    optimize_pension_fund_3()
+    # optimize_investment_1()
+    # optimize_bond_fund_2()
+    # optimize_pension_fund_3()
+    optimize_bond_fund_2v()
 
 
 
