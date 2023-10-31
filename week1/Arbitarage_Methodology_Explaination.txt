@@ -19,7 +19,7 @@ Maximized function
 
 
 ######################Mathematical formulation####################################
-
+ 
 -> Inequality constraints:
 1. (sum over i)r_ij*x_ij >= 0 -> for each j = 1,2,3......n
 2. (sum over j)x_ij >= 0 -> for each i = 1,2,3......n
@@ -31,7 +31,7 @@ Maximized function
 4. 0<=X_ij<=arbitary_bound
 
 -> Function 
-5) (sum over i)r_ik*x_ik - (sum over j)x_kj >= 0 -> for k currrency maximize to get arbitarage
+5. (sum over i)r_ik*x_ik - (sum over j)x_kj >= 0 -> for k currrency maximize to get arbitarage
 
 #######################Python solution#################################################
 

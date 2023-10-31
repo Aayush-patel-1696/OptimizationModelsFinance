@@ -21,7 +21,6 @@ def dual_of_first_second_problem():
 
     print(opt.x)
 
-
 def game_matrix_primal_third_problem():
 
     # Primal Problem
@@ -48,9 +47,6 @@ def game_matrix_primal_third_problem():
 
     print(opt.x)
 
-
-
-
 def game_matrix_dual_third_problem():
     obj = [-1,0,0,0]        
 
@@ -74,7 +70,6 @@ def game_matrix_dual_third_problem():
     opt = optimize.linprog(c=obj, A_ub=lhs_ineq, b_ub=rhs_ineq,A_eq=lhs_eq,b_eq=rhs_eq,bounds=bnd,method="highs")
 
     print(opt.x)
-
 
 
 dual_of_first_second_problem()
