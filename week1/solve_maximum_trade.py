@@ -30,7 +30,6 @@ for i in (0,len(trade_list)):
         if m[0] <= temp_end:
           
             if len(extract_profit)==0:
-                
                 extract_profit.append([(m[0],m[1],m[2])])
                 print(extract_profit)
             else:

@@ -247,8 +247,6 @@ def get_arbitrage(rate_conversion_matrix,size,currency_index,arbitary_bound):
 
 
 
-
-
 if __name__ == "__main__":
 
     problem_1 = optimize_us_dollar_wealth(position_matrix,rate_conversion_matrix,size)
