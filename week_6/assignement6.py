@@ -42,7 +42,7 @@ bnds = ((0,float('inf')),(0,float('inf')),
         (0,float('inf')),(0,float('inf')),
         (0,float('inf')),(0,float('inf')),
         (0,float('inf')),(0,float('inf')))
-
+                   # objective,  # initialized_values, 
 result = minimize(minimize_func,0.08*np.ones(10),centered_return_rate_2,bounds=None,constraints=con,method ='SLSQP')
 shorting_allowed_x = result.x
 print("shorting allowed result",result)
