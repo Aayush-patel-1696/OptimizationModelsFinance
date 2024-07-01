@@ -135,7 +135,7 @@ def optimize_us_dollar_wealth(position_matrix,rate_conversion_matrix,size):
     print("Ans",opt.x)
 
     data = np.asarray((opt.x).reshape(10,10))
-    np.savetxt(r'week1/ans_optimize_us_dollar.csv', data, delimiter=',')
+    np.savetxt(r'currency-arbitrage/ans_optimize_us_dollar.csv', data, delimiter=',')
 
     return None
 
@@ -241,7 +241,7 @@ def get_arbitrage(rate_conversion_matrix,size,currency_index,arbitary_bound):
   
     p = (data_1-data_2)*(rate_conversion_matrix[:,currency_index])
     print("Increase in currency",np.sum(p))
-    np.savetxt(r'week1/ans_arbitrage.csv', data, delimiter=',')
+    np.savetxt(r'currency-arbitrage/ans_arbitrage.csv', data, delimiter=',')
 
     return None
 
